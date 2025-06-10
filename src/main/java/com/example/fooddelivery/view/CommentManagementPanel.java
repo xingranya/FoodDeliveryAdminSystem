@@ -2,6 +2,7 @@ package com.example.fooddelivery.view;
 
 import com.example.fooddelivery.model.Comment;
 import com.example.fooddelivery.util.DataService;
+import com.example.fooddelivery.util.LogUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -151,6 +152,8 @@ public class CommentManagementPanel extends JPanel {
 
                 Comment comment = new Comment(0, userId, dishId, rating, content, new Date());
                 DataService.addComment(comment);
+                // 记录添加评论的日志
+                LogUtil.logAddComment(userId, dishId);
                 loadComments();
                 dialog.dispose();
                 JOptionPane.showMessageDialog(this, "评论添加成功！");
@@ -218,6 +221,8 @@ public class CommentManagementPanel extends JPanel {
                     currentRow = commentTable.getSelectedRow();
                     int commentId = (int) tableModel.getValueAt(currentRow, 0);
                     DataService.deleteComment(commentId);
+                    // 记录删除评论的日志
+                    LogUtil.logDeleteComment(commentId);
                     loadComments();
                     JOptionPane.showMessageDialog(commentTable, "删除成功！");
                 }

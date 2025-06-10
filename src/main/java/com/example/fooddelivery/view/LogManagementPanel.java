@@ -20,6 +20,7 @@ public class LogManagementPanel extends JPanel {
 
     private JTable logTable; // 日志表格
     private DefaultTableModel tableModel; // 表格模型
+    private Timer refreshTimer; // 自动刷新定时器
 
     public LogManagementPanel() {
         setLayout(new BorderLayout());
@@ -27,6 +28,18 @@ public class LogManagementPanel extends JPanel {
         // 顶部操作区域 (目前只有刷新)
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         topPanel.setBackground(Color.WHITE);
+
+        // 添加自动刷新开关
+        JCheckBox autoRefreshCheckBox = new JCheckBox("自动刷新");
+        autoRefreshCheckBox.setSelected(true);
+        autoRefreshCheckBox.addActionListener(e -> {
+            if (autoRefreshCheckBox.isSelected()) {
+                refreshTimer.start();
+            } else {
+                refreshTimer.stop();
+            }
+        });
+        topPanel.add(autoRefreshCheckBox);
 
         JButton refreshButton = new JButton("刷新");
         refreshButton.addActionListener(e -> loadLogs());
@@ -52,6 +65,10 @@ public class LogManagementPanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(logTable);
         add(scrollPane, BorderLayout.CENTER);
+
+        // 创建自动刷新定时器（每5秒刷新一次）
+        refreshTimer = new Timer(5000, e -> loadLogs());
+        refreshTimer.start();
 
         loadLogs(); // 加载初始数据
     }
