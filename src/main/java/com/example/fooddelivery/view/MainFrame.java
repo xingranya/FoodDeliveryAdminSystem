@@ -87,7 +87,7 @@ public class MainFrame extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                showLoginDialog();
+                showLoginDialogAndReopen();
             }
         });
     }
@@ -114,7 +114,7 @@ public class MainFrame extends JFrame {
         logoutButton.setBackground(new Color(220, 20, 60));
         logoutButton.setFocusPainted(false);
         logoutButton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
-        logoutButton.addActionListener(e -> showLoginDialog());
+        logoutButton.addActionListener(e -> showLoginDialogAndReopen());
         topPanel.add(logoutButton, BorderLayout.EAST);
 
         return topPanel;
@@ -123,13 +123,18 @@ public class MainFrame extends JFrame {
     /**
      * 显示登录对话框
      */
-    private void showLoginDialog() {
-        loginDialog = new LoginDialog(this);
-        loginDialog.setVisible(true);
-        
-        if (!loginDialog.isLoginSuccess()) {
-            System.exit(0);
-        }
+    private void showLoginDialogAndReopen() {
+        this.dispose(); // 先关闭主界面
+        SwingUtilities.invokeLater(() -> {
+            LoginDialog loginDialog = new LoginDialog(null);
+            loginDialog.setVisible(true);
+            if (loginDialog.isLoginSuccess()) {
+                MainFrame frame = new MainFrame();
+                frame.setVisible(true);
+            } else {
+                System.exit(0);
+            }
+        });
     }
 
     /**
@@ -199,11 +204,15 @@ public class MainFrame extends JFrame {
     }
 
     public static void main(String[] args) {
-        // 确保Swing GUI在事件调度线程中运行
         SwingUtilities.invokeLater(() -> {
-            MainFrame frame = new MainFrame();
-            frame.setVisible(true);
-            frame.showLoginDialog();
+            LoginDialog loginDialog = new LoginDialog(null);
+            loginDialog.setVisible(true);
+            if (loginDialog.isLoginSuccess()) {
+                MainFrame frame = new MainFrame();
+                frame.setVisible(true);
+            } else {
+                System.exit(0);
+            }
         });
     }
 }

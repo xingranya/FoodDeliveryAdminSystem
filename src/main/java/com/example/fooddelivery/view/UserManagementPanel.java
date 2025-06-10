@@ -20,12 +20,6 @@ public class UserManagementPanel extends JPanel {
 
     private JTable userTable; // 用户表格
     private DefaultTableModel tableModel; // 表格模型
-    private JTextField usernameField; // 用户名输入框
-    private JPasswordField passwordField; // 密码输入框
-    private JComboBox<String> roleComboBox; // 角色选择框
-    private JButton saveButton; // 保存按钮
-    private JButton cancelButton; // 取消按钮
-    private User currentUser; // 当前编辑的用户对象
 
     public UserManagementPanel() {
         setLayout(new BorderLayout());
@@ -80,7 +74,6 @@ public class UserManagementPanel extends JPanel {
             row.add("操作");
             tableModel.addRow(row);
         }
-        clearForm(); // 刷新后清空表单
     }
 
     /**
@@ -157,18 +150,6 @@ public class UserManagementPanel extends JPanel {
         dialog.add(buttonPanel, BorderLayout.SOUTH);
 
         dialog.setVisible(true);
-    }
-
-    /**
-     * 清空表单并重置为新增模式
-     */
-    private void clearForm() {
-        usernameField.setText("");
-        passwordField.setText("");
-        roleComboBox.setSelectedIndex(0);
-        saveButton.setText("新增");
-        cancelButton.setVisible(false);
-        currentUser = null;
     }
 
     /**

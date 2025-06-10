@@ -743,67 +743,6 @@ public class DataService {
         }
     }
 
-    // Log 相关操作
-
-    /**
-     * 从数据库获取所有日志
-     * @return 日志列表
-     */
-    public static List<Log> getAllLogs() {
-        List<Log> logs = new ArrayList<>();
-        String sql = "SELECT id, operator_id, operation, operation_time FROM logs";
-        try (Connection conn = DBUtil.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                logs.add(new Log(rs.getInt("id"), rs.getInt("operator_id"), rs.getString("operation"), rs.getTimestamp("operation_time")));
-            }
-        } catch (SQLException e) {
-            System.err.println("获取所有日志失败: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return logs;
-    }
-
-    /**
-     * 向数据库添加日志
-     * @param log 待添加的日志对象
-     */
-    public static void addLog(Log log) {
-        String sql = "INSERT INTO logs (operator_id, operation, operation_time) VALUES (?, ?, ?)";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setInt(1, log.getOperatorId());
-            pstmt.setString(2, log.getOperation());
-            pstmt.setTimestamp(3, new Timestamp(log.getOperationTime().getTime()));
-            pstmt.executeUpdate();
-            try (ResultSet rs = pstmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    log.setId(rs.getInt(1));
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("添加日志失败: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 从数据库删除日志
-     * @param logId 待删除日志的ID
-     */
-    public static void deleteLog(int logId) {
-        String sql = "DELETE FROM logs WHERE id = ?";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, logId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("删除日志失败: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
     /**
      * 关闭数据库相关资源
      * @param rs ResultSet对象

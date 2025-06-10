@@ -29,7 +29,8 @@ public class LoginDialog extends JDialog {
         gbc.gridy = 0;
         mainPanel.add(new JLabel("用户名:"), gbc);
         gbc.gridx = 1;
-        JTextField usernameField = new JTextField(20);
+        JTextField usernameField = new JTextField();
+        usernameField.setPreferredSize(new Dimension(180, 28));
         mainPanel.add(usernameField, gbc);
 
         // 密码输入
@@ -37,7 +38,8 @@ public class LoginDialog extends JDialog {
         gbc.gridy = 1;
         mainPanel.add(new JLabel("密码:"), gbc);
         gbc.gridx = 1;
-        JPasswordField passwordField = new JPasswordField(20);
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setPreferredSize(new Dimension(180, 28));
         mainPanel.add(passwordField, gbc);
 
         // 按钮面板
