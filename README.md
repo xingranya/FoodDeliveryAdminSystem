@@ -40,37 +40,41 @@
     USE java_food;
     ```
 
-2.  **导入表结构：** 执行项目根目录下的 `db_schema.sql` 文件中的SQL语句，创建所需的表结构。
+2.  **导入表结构：** 执行项目根目录下的 `java_food.sql` 文件中的SQL语句，创建所需的表结构。
 
 3.  **更新数据库连接信息：**
     打开 `FoodDeliveryAdminSystem/src/main/java/com/example/fooddelivery/util/DBUtil.java` 文件，根据您的MySQL配置修改以下常量：
 
     ```java
     private static final String URL = "jdbc:mysql://localhost:3306/java_food?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai";
-    private static final String USER = "root";
-    private static final String PASSWORD = "xingran8";
+    private static final String USER = "用户名";
+    private static final String PASSWORD = "你的密码";
     ```
 
 ### 2. 编译与运行
 
-1.  **下载JDBC驱动：** 项目中已包含 `mysql-connector-j-8.0.33.jar` 在 `FoodDeliveryAdminSystem/lib/` 目录下。
+本项目是一个Maven项目，推荐使用Maven进行编译和运行。
 
-2.  **编译项目：**
-    打开命令行或终端，进入 `FoodDeliveryAdminSystem` 目录，执行以下命令编译所有Java文件：
+#### 使用 Maven (推荐)
 
-    ```bash
-    find src/main/java -name "*.java" > sources.txt
-    javac -cp lib/mysql-connector-j-8.0.33.jar @sources.txt -d out
-    ```
-
-3.  **运行应用程序：**
-    继续在 `FoodDeliveryAdminSystem` 目录下执行以下命令：
+1.  **编译项目：**
+    打开命令行或终端，进入 `FoodDeliveryAdminSystem` 目录，执行以下Maven命令编译项目并打包：
 
     ```bash
-    java -cp out:lib/mysql-connector-j-8.0.33.jar com.example.fooddelivery.view.MainFrame
+    mvn clean install
     ```
-    *   **Windows 用户请注意：** 将 `-cp out:lib/mysql-connector-j-8.0.33.jar` 中的 `:` 替换为 `;`，即：
-        `java -cp out;lib/mysql-connector-j-8.0.33.jar com.example.fooddelivery.view.MainFrame`
+    此命令会下载所有依赖（包括MySQL JDBC驱动），编译源代码，并将JAR包生成到 `target` 目录下。
+
+2.  **运行应用程序：**
+    方式一：使用Maven执行插件运行 (开发调试推荐)
+    ```bash
+    mvn exec:java -Dexec.mainClass="com.example.fooddelivery.view.MainFrame"
+    ```
+    方式二：运行打包好的JAR包 (需要确保 `pom.xml` 配置了可执行JAR包插件，例如 `maven-jar-plugin` 或 `maven-assembly-plugin`，目前项目 `pom.xml` 尚未配置此功能，因此直接运行JAR包可能无法启动)
+    ```bash
+    java -jar target/FoodDeliveryAdminSystem-1.0-SNAPSHOT.jar
+    ```
+    如果直接运行JAR包遇到问题，请检查 `pom.xml` 中是否配置了 `maven-jar-plugin` 并指定了主类。在当前配置下，推荐使用 `mvn exec:java` 命令。
 
 ## 代码结构与说明
 
@@ -109,7 +113,7 @@ FoodDeliveryAdminSystem/
 │                           ├── SystemInfoPanel.java
 │                           ├── TagManagementPanel.java
 │                           └── UserManagementPanel.java
-└── db_schema.sql                       # 数据库表结构定义
+└── java_food.sql                       # 数据库表结构定义
 ```
 
 ### 关键组件说明
