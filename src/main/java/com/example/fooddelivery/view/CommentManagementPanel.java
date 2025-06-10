@@ -9,12 +9,13 @@ import javax.swing.table.TableCellRenderer; // 导入TableCellRenderer
 import javax.swing.table.TableCellEditor; // 导入TableCellEditor
 import java.awt.*;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
 /**
  * 评论管理面板
- * 负责评论的显示和删除功能
+ * 负责评论的显示、添加和删除功能
  */
 public class CommentManagementPanel extends JPanel {
 
@@ -27,6 +28,10 @@ public class CommentManagementPanel extends JPanel {
         // 顶部操作区域 (目前只有刷新)
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         topPanel.setBackground(Color.WHITE);
+
+        JButton addButton = new JButton("添加评论");
+        addButton.addActionListener(e -> showAddCommentDialog());
+        topPanel.add(addButton);
 
         JButton refreshButton = new JButton("刷新");
         refreshButton.addActionListener(e -> loadComments());
@@ -74,6 +79,93 @@ public class CommentManagementPanel extends JPanel {
             row.add("操作");
             tableModel.addRow(row);
         }
+    }
+
+    /**
+     * 显示添加评论对话框
+     */
+    private void showAddCommentDialog() {
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "添加评论", true);
+        dialog.setLayout(new BorderLayout());
+        dialog.setSize(400, 300);
+        dialog.setLocationRelativeTo(this);
+
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // 用户ID输入
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        formPanel.add(new JLabel("用户ID:"), gbc);
+        gbc.gridx = 1;
+        JTextField userIdField = new JTextField(20);
+        formPanel.add(userIdField, gbc);
+
+        // 菜品ID输入
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        formPanel.add(new JLabel("菜品ID:"), gbc);
+        gbc.gridx = 1;
+        JTextField dishIdField = new JTextField(20);
+        formPanel.add(dishIdField, gbc);
+
+        // 评分输入
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        formPanel.add(new JLabel("评分(1-5):"), gbc);
+        gbc.gridx = 1;
+        JSpinner ratingSpinner = new JSpinner(new SpinnerNumberModel(5, 1, 5, 1));
+        formPanel.add(ratingSpinner, gbc);
+
+        // 评论内容输入
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        formPanel.add(new JLabel("评论内容:"), gbc);
+        gbc.gridx = 1;
+        JTextArea contentArea = new JTextArea(5, 20);
+        contentArea.setLineWrap(true);
+        contentArea.setWrapStyleWord(true);
+        JScrollPane contentScrollPane = new JScrollPane(contentArea);
+        formPanel.add(contentScrollPane, gbc);
+
+        dialog.add(formPanel, BorderLayout.CENTER);
+
+        // 按钮面板
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton saveButton = new JButton("保存");
+        JButton cancelButton = new JButton("取消");
+
+        saveButton.addActionListener(e -> {
+            try {
+                int userId = Integer.parseInt(userIdField.getText().trim());
+                int dishId = Integer.parseInt(dishIdField.getText().trim());
+                int rating = (Integer) ratingSpinner.getValue();
+                String content = contentArea.getText().trim();
+
+                if (content.isEmpty()) {
+                    JOptionPane.showMessageDialog(dialog, "评论内容不能为空！", "错误", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                Comment comment = new Comment(0, userId, dishId, rating, content, new Date());
+                DataService.addComment(comment);
+                loadComments();
+                dialog.dispose();
+                JOptionPane.showMessageDialog(this, "评论添加成功！");
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(dialog, "用户ID和菜品ID必须是数字！", "错误", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        cancelButton.addActionListener(e -> dialog.dispose());
+
+        buttonPanel.add(saveButton);
+        buttonPanel.add(cancelButton);
+        dialog.add(buttonPanel, BorderLayout.SOUTH);
+
+        dialog.setVisible(true);
     }
 
     /**
