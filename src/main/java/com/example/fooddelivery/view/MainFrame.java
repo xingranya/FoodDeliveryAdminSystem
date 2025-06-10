@@ -6,7 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
+import com.example.fooddelivery.view.CategoryManagementPanel;
+import com.example.fooddelivery.view.TagManagementPanel;
 /**
  * 主界面框架
  * 包含顶部导航栏、左侧菜单栏和内容显示区域
