@@ -2,7 +2,6 @@ package com.example.fooddelivery.view;
 
 import com.example.fooddelivery.model.User;
 import com.example.fooddelivery.util.DataService;
-import com.example.fooddelivery.util.LogUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -135,9 +134,7 @@ public class UserManagementPanel extends JPanel {
             User user = new User(0, username, password, role);
             DataService.addUser(user);
             
-            // 记录添加用户的日志
-            LogUtil.logOperation(String.format("添加用户 - 用户名: %s, 角色: %s", username, role));
-            
+
             loadUsers();
             dialog.dispose();
             JOptionPane.showMessageDialog(this, "用户添加成功！");
@@ -204,8 +201,7 @@ public class UserManagementPanel extends JPanel {
                     String username = (String) tableModel.getValueAt(currentRow, 1);
                     DataService.deleteUser(userId);
                     
-                    // 记录删除用户的日志
-                    LogUtil.logOperation(String.format("删除用户 - 用户名: %s", username));
+
                     
                     loadUsers();
                     JOptionPane.showMessageDialog(userTable, "删除成功！");

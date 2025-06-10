@@ -4,7 +4,7 @@ import com.example.fooddelivery.model.Order;
 import com.example.fooddelivery.model.OrderItem;
 import com.example.fooddelivery.model.Dish;
 import com.example.fooddelivery.util.DataService;
-import com.example.fooddelivery.util.LogUtil;
+
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -270,9 +270,7 @@ public class OrderManagementPanel extends JPanel {
                 Order order = new Order(0, userId, new Date(), totalAmount, status, orderItems);
                 DataService.addOrder(order);
                 
-                // 记录添加订单的日志
-                LogUtil.logOperation(String.format("添加订单 - 用户ID: %d, 总金额: %.2f", userId, totalAmount));
-                
+
                 loadOrders();
                 dialog.dispose();
                 JOptionPane.showMessageDialog(this, "订单添加成功！");

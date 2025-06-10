@@ -21,7 +21,7 @@ public class DishDialog extends JDialog {
     private JComboBox<String> statusComboBox;
     private JTextArea descriptionArea;
     private JComboBox<String> categoryComboBox;
-    private JList<String> tagList; // 使用JList多选标签
+    private JComboBox<String> tagComboBox; // 用于单选标签
 
     private Dish currentDish; // 当前编辑的菜品对象，如果是新增则为null
     private boolean succeeded = false; // 标记操作是否成功
@@ -66,14 +66,12 @@ public class DishDialog extends JDialog {
         categoryComboBox = new JComboBox<>(categoryNames);
         formPanel.add(categoryComboBox);
 
-        // 菜品标签 (多选)
-        formPanel.add(new JLabel("标签 (可多选):"));
+        // 菜品标签（单选下拉）
+        formPanel.add(new JLabel("标签:"));
         List<Tag> tags = DataService.getAllTags();
         String[] tagNames = tags.stream().map(Tag::getName).toArray(String[]::new);
-        tagList = new JList<>(tagNames);
-        tagList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        JScrollPane tagScrollPane = new JScrollPane(tagList);
-        formPanel.add(tagScrollPane);
+        tagComboBox = new JComboBox<>(tagNames);
+        formPanel.add(tagComboBox);
 
         add(formPanel, BorderLayout.CENTER);
 
@@ -110,17 +108,17 @@ public class DishDialog extends JDialog {
                 .findFirst()
                 .ifPresent(c -> categoryComboBox.setSelectedItem(c.getName()));
 
-        // 设置标签选中项
+        // 设置标签选中项（只取第一个标签）
         List<Integer> selectedTagIds = currentDish.getTagIds();
         List<Tag> allTags = DataService.getAllTags();
-        int[] selectedIndices = new int[selectedTagIds.size()];
-        int count = 0;
-        for (int i = 0; i < allTags.size(); i++) {
-            if (selectedTagIds.contains(allTags.get(i).getId())) {
-                selectedIndices[count++] = i;
+        if (!selectedTagIds.isEmpty()) {
+            for (int i = 0; i < allTags.size(); i++) {
+                if (selectedTagIds.get(0) == allTags.get(i).getId()) {
+                    tagComboBox.setSelectedIndex(i);
+                    break;
+                }
             }
         }
-        tagList.setSelectedIndices(selectedIndices);
     }
 
     /**
@@ -132,7 +130,7 @@ public class DishDialog extends JDialog {
         String status = (String) statusComboBox.getSelectedItem();
         String description = descriptionArea.getText().trim();
         String categoryName = (String) categoryComboBox.getSelectedItem();
-        List<String> selectedTagNames = tagList.getSelectedValuesList();
+        String tagName = (String) tagComboBox.getSelectedItem();
 
         // 数据校验
         if (name.isEmpty() || priceStr.isEmpty() || description.isEmpty()) {
@@ -158,9 +156,9 @@ public class DishDialog extends JDialog {
                 .findFirst()
                 .orElse(-1); // 应该不会发生，因为是从现有分类中选择
 
-        // 获取标签ID列表
+        // 获取标签ID列表（只选一个标签）
         List<Integer> tagIds = DataService.getAllTags().stream()
-                .filter(tag -> selectedTagNames.contains(tag.getName()))
+                .filter(tag -> tag.getName().equals(tagName))
                 .map(Tag::getId)
                 .collect(Collectors.toList());
 
