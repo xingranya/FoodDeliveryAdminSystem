@@ -2,11 +2,12 @@ package com.example.fooddelivery.view;
 
 import com.example.fooddelivery.model.User;
 import com.example.fooddelivery.util.DataService;
+import com.example.fooddelivery.util.LogUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer; // 导入TableCellRenderer
-import javax.swing.table.TableCellEditor; // 导入TableCellEditor
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.util.List;
 import java.util.Vector;
@@ -33,26 +34,13 @@ public class UserManagementPanel extends JPanel {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         topPanel.setBackground(Color.WHITE);
 
-        topPanel.add(new JLabel("用户名:"));
-        usernameField = new JTextField(15);
-        topPanel.add(usernameField);
+        JButton addButton = new JButton("添加用户");
+        addButton.addActionListener(e -> showAddUserDialog());
+        topPanel.add(addButton);
 
-        topPanel.add(new JLabel("密码:"));
-        passwordField = new JPasswordField(15);
-        topPanel.add(passwordField);
-
-        topPanel.add(new JLabel("角色:"));
-        roleComboBox = new JComboBox<>(new String[]{"管理员", "普通用户"});
-        topPanel.add(roleComboBox);
-
-        saveButton = new JButton("新增");
-        saveButton.addActionListener(e -> saveUser());
-        topPanel.add(saveButton);
-
-        cancelButton = new JButton("取消编辑");
-        cancelButton.addActionListener(e -> clearForm());
-        cancelButton.setVisible(false); // 初始隐藏
-        topPanel.add(cancelButton);
+        JButton refreshButton = new JButton("刷新");
+        refreshButton.addActionListener(e -> loadUsers());
+        topPanel.add(refreshButton);
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -96,32 +84,79 @@ public class UserManagementPanel extends JPanel {
     }
 
     /**
-     * 保存用户数据（新增或编辑）
+     * 显示添加用户对话框
      */
-    private void saveUser() {
-        String username = usernameField.getText().trim();
-        String password = new String(passwordField.getPassword()).trim();
-        String role = (String) roleComboBox.getSelectedItem();
+    private void showAddUserDialog() {
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "添加用户", true);
+        dialog.setLayout(new BorderLayout());
+        dialog.setSize(400, 300);
+        dialog.setLocationRelativeTo(this);
 
-        if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "用户名和密码不能为空！", "错误", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        if (currentUser == null) {
-            // 新增
-            User newUser = new User(0, username, password, role); // ID由数据库生成
-            DataService.addUser(newUser);
+        // 用户名输入
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        formPanel.add(new JLabel("用户名:"), gbc);
+        gbc.gridx = 1;
+        JTextField usernameField = new JTextField(20);
+        formPanel.add(usernameField, gbc);
+
+        // 密码输入
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        formPanel.add(new JLabel("密码:"), gbc);
+        gbc.gridx = 1;
+        JPasswordField passwordField = new JPasswordField(20);
+        formPanel.add(passwordField, gbc);
+
+        // 角色选择
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        formPanel.add(new JLabel("角色:"), gbc);
+        gbc.gridx = 1;
+        String[] roles = {"admin", "user"};
+        JComboBox<String> roleComboBox = new JComboBox<>(roles);
+        formPanel.add(roleComboBox, gbc);
+
+        dialog.add(formPanel, BorderLayout.CENTER);
+
+        // 按钮面板
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton saveButton = new JButton("保存");
+        JButton cancelButton = new JButton("取消");
+
+        saveButton.addActionListener(e -> {
+            String username = usernameField.getText().trim();
+            String password = new String(passwordField.getPassword());
+            String role = (String) roleComboBox.getSelectedItem();
+
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "用户名和密码不能为空！", "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            User user = new User(0, username, password, role);
+            DataService.addUser(user);
+            
+            // 记录添加用户的日志
+            LogUtil.logOperation(String.format("添加用户 - 用户名: %s, 角色: %s", username, role));
+            
+            loadUsers();
+            dialog.dispose();
             JOptionPane.showMessageDialog(this, "用户添加成功！");
-        } else {
-            // 编辑
-            currentUser.setUsername(username);
-            currentUser.setPassword(password);
-            currentUser.setRole(role);
-            DataService.updateUser(currentUser);
-            JOptionPane.showMessageDialog(this, "用户更新成功！");
-        }
-        loadUsers();
+        });
+
+        cancelButton.addActionListener(e -> dialog.dispose());
+
+        buttonPanel.add(saveButton);
+        buttonPanel.add(cancelButton);
+        dialog.add(buttonPanel, BorderLayout.SOUTH);
+
+        dialog.setVisible(true);
     }
 
     /**
@@ -140,18 +175,10 @@ public class UserManagementPanel extends JPanel {
      * 表格操作列的渲染器
      */
     class ButtonRenderer extends JPanel implements TableCellRenderer {
-        private JButton editButton;
         private JButton deleteButton;
 
         public ButtonRenderer() {
             setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
-            editButton = new JButton("编辑");
-            editButton.setFocusPainted(false);
-            editButton.setBackground(new Color(70, 130, 180));
-            editButton.setForeground(Color.WHITE);
-            editButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-            add(editButton);
-
             deleteButton = new JButton("删除");
             deleteButton.setFocusPainted(false);
             deleteButton.setBackground(new Color(220, 20, 60));
@@ -176,38 +203,12 @@ public class UserManagementPanel extends JPanel {
      */
     class ButtonEditor extends DefaultCellEditor {
         private JPanel panel;
-        private JButton editButton;
         private JButton deleteButton;
         private int currentRow;
 
         public ButtonEditor(JCheckBox checkBox) {
             super(checkBox);
             panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
-            editButton = new JButton("编辑");
-            editButton.setFocusPainted(false);
-            editButton.setBackground(new Color(70, 130, 180));
-            editButton.setForeground(Color.WHITE);
-            editButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-            editButton.addActionListener(e -> {
-                fireEditingStopped();
-                currentRow = userTable.getSelectedRow();
-                int userId = (int) tableModel.getValueAt(currentRow, 0);
-                String username = (String) tableModel.getValueAt(currentRow, 1);
-                String role = (String) tableModel.getValueAt(currentRow, 2);
-                // 密码不从表格中获取，因为表格不显示密码，需要从DataService中获取完整User对象
-                currentUser = DataService.getAllUsers().stream()
-                        .filter(u -> u.getId() == userId)
-                        .findFirst().orElse(null);
-                if (currentUser != null) {
-                    usernameField.setText(currentUser.getUsername());
-                    passwordField.setText(currentUser.getPassword()); // 填充原始密码
-                    roleComboBox.setSelectedItem(currentUser.getRole());
-                    saveButton.setText("更新");
-                    cancelButton.setVisible(true);
-                }
-            });
-            panel.add(editButton);
-
             deleteButton = new JButton("删除");
             deleteButton.setFocusPainted(false);
             deleteButton.setBackground(new Color(220, 20, 60));
@@ -215,11 +216,16 @@ public class UserManagementPanel extends JPanel {
             deleteButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
             deleteButton.addActionListener(e -> {
                 fireEditingStopped();
-                int confirm = JOptionPane.showConfirmDialog(userTable, "确定要删除这条用户吗？", "确认删除", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(userTable, "确定要删除这个用户吗？", "确认删除", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     currentRow = userTable.getSelectedRow();
                     int userId = (int) tableModel.getValueAt(currentRow, 0);
+                    String username = (String) tableModel.getValueAt(currentRow, 1);
                     DataService.deleteUser(userId);
+                    
+                    // 记录删除用户的日志
+                    LogUtil.logOperation(String.format("删除用户 - 用户名: %s", username));
+                    
                     loadUsers();
                     JOptionPane.showMessageDialog(userTable, "删除成功！");
                 }

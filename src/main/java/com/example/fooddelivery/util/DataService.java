@@ -377,7 +377,12 @@ public class DataService {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                users.add(new User(rs.getInt("id"), rs.getString("username"), rs.getString("password"), rs.getString("role")));
+                users.add(new User(
+                    rs.getInt("id"),
+                    rs.getString("username"),
+                    rs.getString("password"),
+                    rs.getString("role")
+                ));
             }
         } catch (SQLException e) {
             System.err.println("获取所有用户失败: " + e.getMessage());
@@ -442,6 +447,35 @@ public class DataService {
             System.err.println("删除用户失败: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 验证用户登录
+     * @param username 用户名
+     * @param password 密码
+     * @return 如果验证成功返回用户对象，否则返回null
+     */
+    public static User validateUser(String username, String password) {
+        String sql = "SELECT id, username, password, role FROM users WHERE username = ? AND password = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new User(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("role")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("验证用户失败: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // Order 相关操作

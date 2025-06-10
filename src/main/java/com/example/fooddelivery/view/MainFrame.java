@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * 主界面框架
@@ -13,6 +15,7 @@ public class MainFrame extends JFrame {
 
     private JPanel contentPanel; // 内容显示区域
     private CardLayout cardLayout; // 用于切换内容面板的布局管理器
+    private LoginDialog loginDialog;
 
     public MainFrame() {
         setTitle("菜品后台管理系统");
@@ -79,6 +82,14 @@ public class MainFrame extends JFrame {
 
         // 默认显示菜品管理界面
         cardLayout.show(contentPanel, "DishManagement");
+
+        // 添加窗口关闭事件处理
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                showLoginDialog();
+            }
+        });
     }
 
     /**
@@ -86,46 +97,39 @@ public class MainFrame extends JFrame {
      * @return 顶部面板
      */
     private JPanel createTopPanel() {
-        JPanel panel = new JPanel();
-        panel.setBackground(new Color(50, 50, 50)); // 深灰色背景
-        panel.setLayout(new BorderLayout());
-        panel.setPreferredSize(new Dimension(getWidth(), 60)); // 设置高度
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(new Color(40, 50, 60));
+        topPanel.setPreferredSize(new Dimension(0, 50));
 
+        // 左侧标题
         JLabel titleLabel = new JLabel("菜品后台管理系统");
-        titleLabel.setForeground(Color.WHITE); // 白色字体
-        titleLabel.setFont(new Font("Microsoft YaHei", Font.BOLD, 24)); // 字体和大小
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0)); // 左边距
-        panel.add(titleLabel, BorderLayout.WEST);
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(new Font("Microsoft YaHei", Font.BOLD, 20));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+        topPanel.add(titleLabel, BorderLayout.WEST);
 
-        JPanel userInfoPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
-        userInfoPanel.setOpaque(false); // 透明背景
-
-        JButton previewButton = new JButton("前台预览");
-        previewButton.setForeground(Color.WHITE);
-        previewButton.setBackground(new Color(70, 70, 70));
-        previewButton.setFocusPainted(false);
-        previewButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        userInfoPanel.add(previewButton);
-
-        JLabel adminLabel = new JLabel("管理员[admin123]");
-        adminLabel.setForeground(Color.WHITE);
-        userInfoPanel.add(adminLabel);
-
+        // 右侧退出按钮
         JButton logoutButton = new JButton("退出");
         logoutButton.setForeground(Color.WHITE);
-        logoutButton.setBackground(new Color(70, 70, 70));
+        logoutButton.setBackground(new Color(220, 20, 60));
         logoutButton.setFocusPainted(false);
-        logoutButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        logoutButton.addActionListener(e -> {
-            // 退出逻辑
-            JOptionPane.showMessageDialog(this, "您已退出登录！");
+        logoutButton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        logoutButton.addActionListener(e -> showLoginDialog());
+        topPanel.add(logoutButton, BorderLayout.EAST);
+
+        return topPanel;
+    }
+
+    /**
+     * 显示登录对话框
+     */
+    private void showLoginDialog() {
+        loginDialog = new LoginDialog(this);
+        loginDialog.setVisible(true);
+        
+        if (!loginDialog.isLoginSuccess()) {
             System.exit(0);
-        });
-        userInfoPanel.add(logoutButton);
-
-        panel.add(userInfoPanel, BorderLayout.EAST);
-
-        return panel;
+        }
     }
 
     /**
@@ -196,11 +200,10 @@ public class MainFrame extends JFrame {
 
     public static void main(String[] args) {
         // 确保Swing GUI在事件调度线程中运行
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new MainFrame().setVisible(true);
-            }
+        SwingUtilities.invokeLater(() -> {
+            MainFrame frame = new MainFrame();
+            frame.setVisible(true);
+            frame.showLoginDialog();
         });
     }
 }

@@ -7,7 +7,7 @@ public class User {
     private int id;
     private String username;
     private String password;
-    private String role; // 例如："管理员", "普通用户"
+    private String role; // 用户角色，如 "admin", "user" 等
 
     // 构造函数
     public User(int id, String username, String password, String role) {
@@ -54,10 +54,9 @@ public class User {
     public String toString() {
         return "User{" +
                "id=" + id +
-               ", username=\'" + username + "\\'" +
-               ", password=\'" + password + "\\'" +
-               ", role=\'" + role + "\\'" +
-               "}";
+               ", username='" + username + '\'' +
+               ", role='" + role + '\'' +
+               '}';
     }
 }
 
