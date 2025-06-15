@@ -8,57 +8,67 @@ import java.awt.*;
 
 public class LoginDialog extends JDialog {
     private boolean loginSuccess = false;
-    private static final String DEFAULT_USERNAME = "admin";
-    private static final String DEFAULT_PASSWORD = "admin123";
-
+    
     public LoginDialog(Frame parent) {
         super(parent, "登录", true);
         setLayout(new BorderLayout());
-        setSize(300, 200);
+        setSize(400, 300);
         setLocationRelativeTo(parent);
         setResizable(false);
 
+        // 创建标题面板
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(new Color(51, 51, 51));
+        JLabel titleLabel = new JLabel("外卖菜品管理系统");
+        titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 24));
+        titleLabel.setForeground(Color.WHITE);
+        titlePanel.add(titleLabel);
+        add(titlePanel, BorderLayout.NORTH);
+
         // 创建主面板
         JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // 用户名输入
         gbc.gridx = 0;
         gbc.gridy = 0;
-        mainPanel.add(new JLabel("用户名:"), gbc);
+        JLabel usernameLabel = new JLabel("用户名:");
+        usernameLabel.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        mainPanel.add(usernameLabel, gbc);
         gbc.gridx = 1;
         JTextField usernameField = new JTextField();
-        usernameField.setPreferredSize(new Dimension(180, 28));
+        usernameField.setPreferredSize(new Dimension(220, 30));
         mainPanel.add(usernameField, gbc);
 
         // 密码输入
         gbc.gridx = 0;
         gbc.gridy = 1;
-        mainPanel.add(new JLabel("密码:"), gbc);
+        JLabel passwordLabel = new JLabel("密码:");
+        passwordLabel.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        mainPanel.add(passwordLabel, gbc);
         gbc.gridx = 1;
         JPasswordField passwordField = new JPasswordField();
-        passwordField.setPreferredSize(new Dimension(180, 28));
+        passwordField.setPreferredSize(new Dimension(220, 30));
         mainPanel.add(passwordField, gbc);
 
         // 按钮面板
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         JButton loginButton = new JButton("登录");
         JButton cancelButton = new JButton("取消");
+        
+        // 设置按钮样式
+        loginButton.setPreferredSize(new Dimension(100, 35));
+        cancelButton.setPreferredSize(new Dimension(100, 35));
+        loginButton.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        cancelButton.setFont(new Font("微软雅黑", Font.PLAIN, 14));
 
         loginButton.addActionListener(e -> {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword());
 
-            // 首先尝试使用默认账号密码
-            if (username.equals(DEFAULT_USERNAME) && password.equals(DEFAULT_PASSWORD)) {
-                loginSuccess = true;
-                dispose();
-                return;
-            }
-
-            // 然后尝试从数据库验证
             User user = DataService.validateUser(username, password);
             if (user != null) {
                 loginSuccess = true;
