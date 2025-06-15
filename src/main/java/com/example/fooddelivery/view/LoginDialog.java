@@ -19,7 +19,7 @@ public class LoginDialog extends JDialog {
         // 创建标题面板
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(51, 51, 51));
-        JLabel titleLabel = new JLabel("外卖菜品管理系统");
+        JLabel titleLabel = new JLabel("外卖后台管理系统");
         titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 24));
         titleLabel.setForeground(Color.WHITE);
         titlePanel.add(titleLabel);

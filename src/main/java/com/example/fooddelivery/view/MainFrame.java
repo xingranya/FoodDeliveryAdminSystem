@@ -19,7 +19,7 @@ public class MainFrame extends JFrame {
     private LoginDialog loginDialog;
 
     public MainFrame() {
-        setTitle("菜品后台管理系统");
+        setTitle("外卖后台管理系统");
         setSize(1200, 800); // 设置窗口大小
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // 设置默认关闭操作
         setLocationRelativeTo(null); // 窗口居中显示
@@ -103,7 +103,7 @@ public class MainFrame extends JFrame {
         topPanel.setPreferredSize(new Dimension(0, 50));
 
         // 左侧标题
-        JLabel titleLabel = new JLabel("菜品后台管理系统");
+        JLabel titleLabel = new JLabel("外卖后台管理系统");
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Microsoft YaHei", Font.BOLD, 20));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));

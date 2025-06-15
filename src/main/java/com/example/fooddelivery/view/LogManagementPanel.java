@@ -46,7 +46,7 @@ public class LogManagementPanel extends JPanel {
     }
 
     /**
-     * 加载日志数据到表格（无实际数据，仅清空）
+     * 加载日志数据到表格（无实际数据）
      */
     private void loadLogs() {
         tableModel.setRowCount(0); // 清空现有数据
