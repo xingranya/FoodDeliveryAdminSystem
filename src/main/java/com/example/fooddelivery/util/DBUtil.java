@@ -21,7 +21,6 @@ public class DBUtil {
         } catch (ClassNotFoundException e) {
             System.err.println("无法加载MySQL JDBC驱动: " + e.getMessage());
             e.printStackTrace();
-            // 实际应用中，这里应该抛出运行时异常或进行更完善的错误处理
         }
     }
 

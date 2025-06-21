@@ -200,9 +200,6 @@ public class UserManagementPanel extends JPanel {
                     int userId = (int) tableModel.getValueAt(currentRow, 0);
                     String username = (String) tableModel.getValueAt(currentRow, 1);
                     DataService.deleteUser(userId);
-                    
-
-                    
                     loadUsers();
                     JOptionPane.showMessageDialog(userTable, "删除成功！");
                 }

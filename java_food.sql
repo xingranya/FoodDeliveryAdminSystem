@@ -11,7 +11,7 @@
  Target Server Version : 80042 (8.0.42)
  File Encoding         : 65001
 
- Date: 10/06/2025 11:11:22
+ Date: 21/06/2025 20:46:45
 */
 
 SET NAMES utf8mb4;
@@ -28,14 +28,17 @@ CREATE TABLE `categories` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of categories
 -- ----------------------------
 BEGIN;
-INSERT INTO `categories` (`id`, `name`, `created_at`, `updated_at`) VALUES (1, '主食', '2025-06-10 10:12:04', '2025-06-10 10:12:04');
-INSERT INTO `categories` (`id`, `name`, `created_at`, `updated_at`) VALUES (2, '酒水', '2025-06-10 10:44:41', '2025-06-10 10:44:41');
+INSERT INTO `categories` (`id`, `name`, `created_at`, `updated_at`) VALUES (1, '主食', '2025-06-10 10:12:04', '2025-06-16 21:33:47');
+INSERT INTO `categories` (`id`, `name`, `created_at`, `updated_at`) VALUES (2, '炸物', '2025-06-16 20:37:17', '2025-06-16 20:37:20');
+INSERT INTO `categories` (`id`, `name`, `created_at`, `updated_at`) VALUES (3, '小食', '2025-06-16 20:37:46', '2025-06-16 20:37:48');
+INSERT INTO `categories` (`id`, `name`, `created_at`, `updated_at`) VALUES (4, '酒水', '2025-06-16 20:38:04', '2025-06-16 20:38:06');
+INSERT INTO `categories` (`id`, `name`, `created_at`, `updated_at`) VALUES (7, '菜品', '2025-06-21 20:21:55', '2025-06-21 20:21:55');
 COMMIT;
 
 -- ----------------------------
@@ -56,12 +59,14 @@ CREATE TABLE `comments` (
   KEY `dish_id` (`dish_id`),
   CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`dish_id`) REFERENCES `dishes` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of comments
 -- ----------------------------
 BEGIN;
+INSERT INTO `comments` (`id`, `user_id`, `dish_id`, `rating`, `content`, `comment_time`, `created_at`, `updated_at`) VALUES (1, 1, 2, 5, '大白馒头真美味啊，这才是经典经久不衰，每天必点！', '2025-06-17 11:30:01', '2025-06-17 11:30:01', '2025-06-17 11:30:01');
+INSERT INTO `comments` (`id`, `user_id`, `dish_id`, `rating`, `content`, `comment_time`, `created_at`, `updated_at`) VALUES (2, 2, 3, 5, '这个也很美味', '2025-06-21 17:52:43', '2025-06-21 17:52:43', '2025-06-21 17:53:02');
 COMMIT;
 
 -- ----------------------------
@@ -81,6 +86,9 @@ CREATE TABLE `dish_tags` (
 -- Records of dish_tags
 -- ----------------------------
 BEGIN;
+INSERT INTO `dish_tags` (`dish_id`, `tag_id`) VALUES (4, 1);
+INSERT INTO `dish_tags` (`dish_id`, `tag_id`) VALUES (5, 1);
+INSERT INTO `dish_tags` (`dish_id`, `tag_id`) VALUES (3, 2);
 COMMIT;
 
 -- ----------------------------
@@ -97,7 +105,7 @@ CREATE TABLE `dishes` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of dishes
@@ -105,6 +113,9 @@ CREATE TABLE `dishes` (
 BEGIN;
 INSERT INTO `dishes` (`id`, `name`, `price`, `status`, `description`, `category_id`, `created_at`, `updated_at`) VALUES (1, '米饭', 2, '上架', '香香软软大白米饭', 1, '2025-06-10 10:12:41', '2025-06-10 10:12:41');
 INSERT INTO `dishes` (`id`, `name`, `price`, `status`, `description`, `category_id`, `created_at`, `updated_at`) VALUES (2, '大白馒头', 2, '上架', '香香软软的大白馒头', 1, '2025-06-10 10:52:59', '2025-06-10 10:52:59');
+INSERT INTO `dishes` (`id`, `name`, `price`, `status`, `description`, `category_id`, `created_at`, `updated_at`) VALUES (3, '川香水煮肉片米线', 10, '上架', '地道川渝味', 1, '2025-06-16 17:38:29', '2025-06-16 17:38:29');
+INSERT INTO `dishes` (`id`, `name`, `price`, `status`, `description`, `category_id`, `created_at`, `updated_at`) VALUES (4, '炸酱面/米线', 6, '上架', '经典炸酱', 1, '2025-06-16 17:39:09', '2025-06-16 17:39:09');
+INSERT INTO `dishes` (`id`, `name`, `price`, `status`, `description`, `category_id`, `created_at`, `updated_at`) VALUES (5, '热干面', 4, '上架', '地道武汉热干面', 1, '2025-06-16 19:38:05', '2025-06-16 19:38:05');
 COMMIT;
 
 -- ----------------------------
@@ -119,12 +130,13 @@ CREATE TABLE `logs` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of logs
 -- ----------------------------
 BEGIN;
+INSERT INTO `logs` (`id`, `operator_id`, `operation`, `operation_time`, `created_at`, `updated_at`) VALUES (1, 1, '添加菜品', '2025-06-16 20:35:33', '2025-06-16 20:35:43', '2025-06-16 20:35:40');
 COMMIT;
 
 -- ----------------------------
@@ -144,12 +156,13 @@ CREATE TABLE `order_items` (
   KEY `dish_id` (`dish_id`),
   CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
   CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`dish_id`) REFERENCES `dishes` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of order_items
 -- ----------------------------
 BEGIN;
+INSERT INTO `order_items` (`id`, `order_id`, `dish_id`, `quantity`, `price`, `created_at`, `updated_at`) VALUES (5, 8, 1, 1, 2, '2025-06-21 20:39:47', '2025-06-21 20:39:47');
 COMMIT;
 
 -- ----------------------------
@@ -167,12 +180,13 @@ CREATE TABLE `orders` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
 BEGIN;
+INSERT INTO `orders` (`id`, `user_id`, `order_time`, `total_amount`, `status`, `created_at`, `updated_at`) VALUES (8, 4, '2025-06-21 20:39:48', 2, '待支付', '2025-06-21 20:39:47', '2025-06-21 20:39:47');
 COMMIT;
 
 -- ----------------------------
@@ -209,13 +223,16 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
 BEGIN;
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `created_at`, `updated_at`) VALUES (1, 'admin', 'admin', 'admin', '2025-06-10 10:42:46', '2025-06-10 10:42:52');
+INSERT INTO `users` (`id`, `username`, `password`, `role`, `created_at`, `updated_at`) VALUES (2, 'defualtUser', 'defualtUser', 'user', '2025-06-17 14:31:26', '2025-06-17 14:31:26');
+INSERT INTO `users` (`id`, `username`, `password`, `role`, `created_at`, `updated_at`) VALUES (3, '小明', 'xiaoming', 'user', '2025-06-17 14:31:51', '2025-06-17 16:57:48');
+INSERT INTO `users` (`id`, `username`, `password`, `role`, `created_at`, `updated_at`) VALUES (4, '小李', 'xiaoli ', 'admin', '2025-06-17 14:32:41', '2025-06-17 14:32:41');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
