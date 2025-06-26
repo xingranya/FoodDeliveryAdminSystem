@@ -28,7 +28,7 @@ public class OrderManagementPanel extends JPanel {
     public OrderManagementPanel() {
         setLayout(new BorderLayout());
 
-        // 顶部操作区域 (目前只有刷新)
+        // 顶部操作区域 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         topPanel.setBackground(Color.WHITE);
 
